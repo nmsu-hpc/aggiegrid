@@ -1,0 +1,82 @@
+## Where have you installed the bin, sbin and lib condor directories?
+RELEASE_DIR = /usr
+
+## This is where the local config file(s), logs and spool/execute directories are locate
+LOCAL_DIR = /var
+
+## Where is the machine-specific local config file for each host?
+LOCAL_CONFIG_FILE = /etc/condor/condor_config.local
+
+## If the local config file is not present, is it an error? (WARNING: This is a potential security issue.)
+REQUIRE_LOCAL_CONFIG_FILE = false
+
+## Config files are read in lexicographic order.
+LOCAL_CONFIG_DIR = /etc/condor/config.d
+LOCAL_CONFIG_DIR_EXCLUDE_REGEXP = ^((\..*)|(.*~)|(#.*)|(.*\.rpmsave)|(.*\.rpmnew))$
+
+# Enable CGROUP control
+BASE_CGROUP = /system.slice/condor.service
+CGROUP_MEMORY_LIMIT_POLICY = soft
+
+##  Pathnames
+RUN     = $(LOCAL_DIR)/run/condor
+LOG     = $(LOCAL_DIR)/log/condor
+LOCK    = $(LOCAL_DIR)/lock/condor
+SPOOL   = $(LOCAL_DIR)/lib/condor/spool
+EXECUTE = $(LOCAL_DIR)/lib/condor/execute
+BIN     = $(RELEASE_DIR)/bin
+LIB = $(RELEASE_DIR)/lib64/condor
+INCLUDE = $(RELEASE_DIR)/include/condor
+SBIN    = $(RELEASE_DIR)/sbin
+LIBEXEC = $(RELEASE_DIR)/libexec/condor
+SHARE   = $(RELEASE_DIR)/share/condor
+
+PROCD_ADDRESS = $(RUN)/procd_pipe
+
+JAVA_CLASSPATH_DEFAULT = $(SHARE) $(SHARE)/scimark2lib.jar .
+SSH_TO_JOB_SSHD_CONFIG_TEMPLATE = /etc/condor/condor_ssh_to_job_sshd_config_template
+
+## Security
+use SECURITY : HOST_BASED
+ALLOW_WRITE = *.domain.com
+ALLOW_READ = *.domain.com
+SEC_PASSWORD_FILE = $(LOCAL_DIR)/lib/condor/pool_password
+SEC_DAEMON_AUTHENTICATION = REQUIRED
+SEC_DAEMON_INTEGRITY = REQUIRED
+SEC_DAEMON_AUTHENTICATION_METHODS = PASSWORD
+SEC_CLIENT_AUTHENTICATION_METHODS = FS, PASSWORD, KERBEROS, GSI
+ALLOW_DAEMON = condor_pool@domain.com
+
+## Shared Port
+USE_SHARED_PORT = True
+SHARED_PORT_PORT = 9618
+SHARED_PORT_ARGS = -p 9618
+
+## Central Manager
+CONDOR_HOST = headnode.domain.com
+
+## Collector Settings
+COLLECTOR_HOST = headnode.domain.com:9618?sock=collector
+COLLECTOR_ARGS = -sock collector
+COLLECTOR_MAX_FILE_DESCRIPTORS = 1600
+COLLECTOR_USES_SHARED_PORT = True
+UPDATE_COLLECTOR_WITH_TCP = True
+
+##  When is this machine willing to start/suspend/stop a job?
+START = TRUE
+CONTINUE = TRUE
+SUSPEND = FALSE
+PREEMPT = FALSE
+KILL = FALSE
+
+# Fake Directories inside the execute directory
+MOUNT_UNDER_SCRATCH = "/tmp,/var/tmp,/home"
+
+## Slot Setup
+NUM_SLOTS = 1
+NUM_SLOTS_TYPE_1 = 1
+SLOT_TYPE_1 = CPU=auto,MEM=85%,DISK=auto
+SLOT_TYPE_1_PARTITIONABLE = FALSE
+
+## This macro determines what daemons the condor_master will start and keep its watchful eyes on.
+DAEMON_LIST = SHARED_PORT, MASTER, STARTD

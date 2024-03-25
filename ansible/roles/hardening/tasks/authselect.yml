@@ -1,0 +1,65 @@
+---
+
+- name: ensure oddjob is installed
+  package:
+    name:
+      - 'oddjob'
+      - 'oddjob-mkhomedir'
+    state: present
+
+- name: get authselect profile # noqa 306
+  shell: authselect current --raw | awk '{print $1}'
+  changed_when: false
+  failed_when: false
+  register: pam_authselect_current
+
+- name: get authselect profile # noqa 306
+  shell: authselect current --raw | awk '{$1 = ""; print $0}'
+  changed_when: false
+  failed_when: false
+  register: pam_authselect_current_options
+
+- name: create custom profile (sssd)
+  command: authselect create-profile ciscat -b sssd --symlink-meta
+  failed_when: false
+  when: >
+    pam_authselect_current.stdout == "sssd"
+    or pam_authselect_current.stdout == "No"
+
+- name: create custom profile (winbind)
+  command: authselect create-profile ciscat -b winbind --symlink-meta
+  failed_when: false
+  when: pam_authselect_current.stdout == "winbind"
+
+- name: set authselect profile
+  command: >
+    authselect select --force custom/ciscat
+    with-mkhomedir
+    with-faillock
+    without-nullok
+    with-custom-automount
+    with-custom-group
+    with-custom-netgroup
+    with-custom-passwd
+    with-custom-services
+  when: >
+    pam_authselect_current.stdout != "custom/ciscat"
+    or "with-mkhomedir" not in pam_authselect_current_options.stdout
+    or "with-faillock" not in pam_authselect_current_options.stdout
+    or "without-nullok" not in pam_authselect_current_options.stdout
+    or "with-custom-automount" not in pam_authselect_current_options.stdout
+    or "with-custom-group" not in pam_authselect_current_options.stdout
+    or "with-custom-netgroup" not in pam_authselect_current_options.stdout
+    or "with-custom-passwd" not in pam_authselect_current_options.stdout
+    or "with-custom-services" not in pam_authselect_current_options.stdout
+
+- name: set pwquality.conf
+  template:
+    src: 'etc/security/pwquality.conf.j2'
+    dest: '/etc/security/pwquality.conf'
+    owner: root
+    group: root
+    mode: '0644'
+  notify: update authselect
+
+...

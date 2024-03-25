@@ -1,0 +1,42 @@
+---
+
+- name: install required packages
+  package:
+    name: 'bind-utils'
+    state: present
+
+- name: Create Root Timer Scripts Folder
+  file:
+    path: "/root/.timers"
+    owner: root
+    group: root
+    mode: '0700'
+    state: directory
+
+- name: copy grid-startup script
+  copy:
+    src: grid-startup.sh
+    dest: "/root/.timers/grid-startup.sh"
+    owner: root
+    group: root
+    mode: '0700'
+    backup: no
+
+- name: copy systemd service file
+  copy:
+    src: grid-startup.service
+    dest: "/etc/systemd/system/grid-startup.service"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: no
+  notify:
+    - daemon reload
+
+- name: enable service
+  systemd:
+    name: 'grid-startup'
+    enabled: yes
+    state: stopped
+
+...

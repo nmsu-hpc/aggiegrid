@@ -1,0 +1,13 @@
+---
+
+- name: restart autofs
+  systemd:
+    name: "autofs"
+    state: restarted
+  listen: refresh cvmfs
+
+- name: ls osg oasis
+  command: ls /cvmfs/oasis.opensciencegrid.org
+  listen: refresh cvmfs
+
+...

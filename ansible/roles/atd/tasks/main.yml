@@ -1,0 +1,23 @@
+---
+
+- name: install cronie/crond
+  package:
+    name:
+      - 'at'
+    state: present
+
+- name: setup user allow list
+  include_tasks: allow.yml
+  when: crond_access_mode == "allow"
+
+- name: setup user deny list
+  include_tasks: deny.yml
+  when: crond_access_mode == "deny"
+
+- name: start/enable crond
+  systemd:
+    name: 'atd'
+    enabled: yes
+    state: started
+
+...

@@ -1,0 +1,21 @@
+---
+
+- name: set user namespaces
+  copy:
+    src: '90-max_user_namespaces.conf'
+    dest: '/etc/sysctl.d/90-max_user_namespaces.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
+  notify: reload sysctl
+
+#- name: set network namespaces
+#  copy:
+#    src: '90-max_net_namespaces.conf'
+#    dest: '/etc/sysctl.d/90-max_net_namespaces.conf'
+#    owner: 'root'
+#    group: 'root'
+#    mode: '0600'
+#  notify: reload sysctl
+
+...

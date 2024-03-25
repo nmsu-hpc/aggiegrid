@@ -1,0 +1,4 @@
+---
+
+selinux_mode: "enforcing" # enforcing/disabled/permissive
+selinux_policy: "targeted"

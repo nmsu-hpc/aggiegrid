@@ -1,0 +1,34 @@
+---
+
+openssh_banner_text: "Authorized uses only. All activity may be monitored and reported."
+
+openssh_loginGraceTime: '60'
+openssh_permitRootLogin: "no" # no/yes
+openssh_maxAuthTries: '4'
+openssh_maxSessions: '4'
+
+openssh_port: "22"
+openssh_loglevel: "INFO" # INFO/VERBOSE/DEBUG
+
+openssh_hostBasedAuthentication: 'no' # no/yes
+openssh_ignoreUserKnownHosts: 'no' # no/yes
+openssh_ignoreRHosts: 'yes' # no/yes
+openssh_passwordAuthentication: 'yes' # no/yes
+openssh_permitEmptyPasswords: 'no' # no/yes
+
+openssh_x11Forwarding: 'no' # no/yes
+openssh_x11DisplayOffset: '10'
+openssh_x11UseLocalHost: 'yes' # no/yes
+
+openssh_allowAgentForwarding: 'no' # no/yes
+openssh_allowTcpForwarding: 'no' # no/yes
+openssh_printMotd: 'yes' # no/yes
+openssh_permitUserEnvironment: 'no' # no/yes
+openssh_clientAliveInterval: '300'
+openssh_clientAliveCountMax: '0'
+openssh_maxStartups: '10:30:60'
+
+openssh_awx_root_allow: yes # no/yes
+openssh_awx_ip: "IP"
+
+...

@@ -1,0 +1,58 @@
+---
+
+- name: check for '/tmp' in fstab
+  command: awk 'index($2, "/tmp")' /etc/fstab
+  changed_when: false
+  register: fstmp_tmp_check
+
+- name: check for '/dev/shm' in fstab
+  command: awk 'index($2, "/dev/shm")' /etc/fstab
+  changed_when: false
+  register: fstmp_dev_shm_check
+
+- name: check for '/var/tmp' in fstab
+  command: awk 'index($2, "/var/tmp")' /etc/fstab
+  changed_when: false
+  register: fstmp_var_tmp_check
+
+- name: create '/tmp' fstab entry
+  mount:
+    path: "/tmp"
+    src: tmpfs
+    opts: "defaults,nodev,nosuid,noexec"
+    fstype: tmpfs
+    state: mounted
+  when: fstmp_tmp_check.stdout | length == 0
+  register: fstmp_tmp_create
+
+- name: create '/dev/shm' fstab entry
+  mount:
+    path: "/dev/shm"
+    src: tmpfs
+    opts: "defaults,nodev,nosuid,noexec"
+    fstype: tmpfs
+    state: mounted
+  when: fstmp_dev_shm_check.stdout | length == 0
+  register: fstmp_dev_shm_create
+
+- name: create '/var/tmp' fstab entry
+  mount:
+    path: "/var/tmp"
+    src: "/tmp"
+    opts: "rw,nodev,nosuid,noexec,bind"
+    fstype: none
+    state: mounted
+  when: fstmp_var_tmp_check.stdout | length == 0
+  register: fstmp_var_tmp_create
+
+- name: 'remount filesystems' # noqa 503
+  mount:
+    path: "{{ item.name }}"
+    state: remounted
+  when: item.changed
+  with_items:
+    - "{{ fstmp_tmp_create | default([]) }}"
+    - "{{ fstmp_dev_shm_create | default([]) }}"
+    - "{{ fstmp_var_tmp_create | default([]) }}"
+
+...

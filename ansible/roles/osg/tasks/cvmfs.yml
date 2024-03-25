@@ -1,0 +1,42 @@
+---
+
+- name: install osg-oasis (includes cvmfs)
+  package:
+    name:
+      - "osg-oasis"
+
+- name: create cvmfs directory
+  file:
+    path: /cvmfs
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: create cvmfs cache directory
+  file:
+    path: "{{ cvmfs_cache_base }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: set cvmfs default.local config file
+  template:
+    src: default.local.j2
+    dest: /etc/cvmfs/default.local
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: refresh cvmfs
+
+- name: create autofs dropin master file
+  template:
+    src: cvmfs.autofs.j2
+    dest: /etc/auto.master.d/cvmfs.autofs
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart autofs
+
+...

@@ -1,0 +1,57 @@
+# {{ ansible_managed }}
+
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+server {{chrony_server_primary}}
+server {{chrony_server_backup}}
+server {{chrony_server_tertiary}}
+
+# Record the rate at which the system clock gains/losses time.
+driftfile /var/lib/chrony/drift
+
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1 second.
+makestep 1.0 3
+
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync
+
+# Enable hardware timestamping on all interfaces that support it.
+#hwtimestamp *
+{% if chrony_hwtimestamp is defined %}
+{{ chrony_hwtimestamp }}
+{% endif %}
+
+# Increase the minimum number of selectable sources required to adjust
+# the system clock.
+#minsources 2
+{% if chrony_minsources is defined %}
+{{ chrony_minsources }}
+{% endif %}
+
+# Allow NTP client access from local network.
+#allow 192.168.0.0/16
+{% if chrony_local_clients is defined %}
+{{ chrony_local_clients }}
+{% endif %}
+
+# Serve time even if not synchronized to a time source.
+#local stratum 10
+{% if chrony_stratum is defined %}
+{{ chrony_stratum }}
+{% endif %}
+
+# Specify file containing keys for NTP authentication.
+#keyfile /etc/chrony.keys
+{% if chrony_keyfile is defined %}
+{{ chrony_keyfile }}
+{% endif %}
+
+# Specify directory for log files.
+logdir /var/log/chrony
+
+# Select which information is logged.
+#log measurements statistics tracking
+{% if chrony_log_info is defined %}
+{{ chrony_log_info }}
+{% endif %}

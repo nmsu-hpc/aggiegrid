@@ -1,0 +1,45 @@
+---
+
+- name: install modprobe and needed utils
+  package:
+    name:
+      - 'module-init-tools'
+      - 'util-linux'
+    state: 'present'
+
+- name: get fstab mounted filesystem types
+  shell: |
+    set -o pipefail
+    egrep -v '^#|^$' /etc/fstab | awk '{print $3}' | sort | uniq
+  changed_when: false
+  when: hrd_kernel_check_mnt_fstab
+  register: kernel_fstab_used_fs
+
+- name: get all mounted filesystem types
+  shell: |
+    set -o pipefail
+    findmnt -n -o FSTYPE | sort | uniq
+  changed_when: false
+  when: hrd_kernel_check_mnt_all
+  register: kernel_all_used_fs
+
+- name: remove discovered filesystems from blacklist
+  set_fact:
+    hrd_kernel_blacklist: "{{ hrd_kernel_blacklist | difference(item.stdout_lines) }}"
+  with_items:
+    - "{{ kernel_fstab_used_fs | default([]) }}"
+    - "{{ kernel_all_used_fs | default([]) }}"
+
+- name: remove whitelist items from blacklist
+  set_fact:
+    hrd_kernel_blacklist: "{{ hrd_kernel_blacklist | difference(hrd_kernel_whitelist) }}"
+
+- name: disable specific kernel modules
+  template:
+    src: 'etc/modprobe.d/hardening.conf.j2'
+    dest: '/etc/modprobe.d/hardening.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+...

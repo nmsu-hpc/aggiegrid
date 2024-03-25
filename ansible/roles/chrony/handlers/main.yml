@@ -1,0 +1,11 @@
+---
+- name: Restart Chronyd
+  systemd:
+    name: chronyd
+    state: restarted
+  listen: time change
+
+- name: Write adjtime
+  command: hwclock --systohc
+  when: chrony_hwclock_sync == "yes"
+  listen: time change

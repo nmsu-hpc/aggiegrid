@@ -1,0 +1,54 @@
+---
+
+- name: Update Nodes
+  hosts: all
+  become: yes
+  tasks:
+    - name: check packages for updates
+      shell: |
+        set -o pipefail
+        yum check-update -q | wc -l
+      changed_when: false
+      failed_when: false
+      args:
+        warn: false
+      register: updates
+
+    - name: display count
+      debug:
+        msg: "Found {{ updates.stdout }} packages to be updated and operations to be performed (depreciating, removing, etc..)."
+
+    - when: (updates.stdout | int > 0)
+      block:
+        - name: install yum-utils
+          package:
+            name: yum-utils
+            state: latest # noqa 403
+
+        - name: install updates using yum
+          yum:
+            name: "*"
+            state: latest # noqa 403
+
+        - name: check if reboot is required
+          command: needs-restarting -r
+          failed_when: false
+          register: reboot_required
+          changed_when: false
+
+        - when: reboot_required.rc != 0
+          block:
+            - name: reboot the server if required
+              reboot:
+                reboot_timeout: 1500
+                pre_reboot_delay: "{{ 300 | random(start=0, step=60) }}"
+              register: reboot_result
+
+            - name: reboot time
+              debug:
+                msg: "The system rebooted in {{ reboot_result.elapsed }} seconds."
+
+            - name: cleanup old kernels
+              command: package-cleanup --oldkernels --count=1
+
+...

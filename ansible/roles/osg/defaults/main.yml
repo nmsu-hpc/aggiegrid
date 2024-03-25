@@ -1,0 +1,18 @@
+---
+
+# OSG Repo
+osg_repo_name: "hps-osg"
+osg_repo_description: "HPC Local OSG/CVMFS Repository"
+osg_repo_file: "hpc-osg"
+osg_repo_baseurl: "url"
+osg_repo_gpgkey: "gpg.key"
+osg_repo_gpgcheck: yes
+osg_repo_enabled: yes
+osg_repo_exclude: "condor*"
+
+# CVMFS
+osg_cvmfs: true # true/false
+cvmfs_repos: "`echo $((echo oasis.opensciencegrid.org;echo cms.cern.ch;ls /cvmfs)|sort -u)|tr ' ' ,`"
+cvmfs_quota_limit: 20000
+cvmfs_http_proxy: "http://domain.com:31200"
+cvmfs_cache_base: "/var/lib/cvmfs"

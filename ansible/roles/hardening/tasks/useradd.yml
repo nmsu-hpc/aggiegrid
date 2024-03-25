@@ -1,0 +1,11 @@
+---
+
+- name: set /etc/default/useradd
+  template:
+    src: 'etc/default/useradd.j2'
+    dest: '/etc/default/useradd'
+    owner: root
+    group: root
+    mode: '0644'
+
+...

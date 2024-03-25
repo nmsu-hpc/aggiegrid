@@ -1,0 +1,65 @@
+---
+
+- name: Create System Spider Cache Folder
+  file:
+    path: "{{ lmod_rc_cache }}"
+    owner: root
+    group: root
+    mode: "u=rwX,g=rX,o=rX"
+    recurse: yes
+    state: directory
+
+- name: Create System Spider Cache Time File
+  file:
+    path: "{{ lmod_rc_cache }}/cacheTS.txt"
+    owner: root
+    group: root
+    mode: '0644'
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Create Root Timer Scripts Folder
+  file:
+    path: "/root/.timers"
+    owner: root
+    group: root
+    mode: '0700'
+    state: directory
+
+- name: copy systemd timer file
+  template:
+    src: lmod-scache.sh.j2
+    dest: "/root/.timers/lmod-scache.sh"
+    owner: root
+    group: root
+    mode: '0700'
+    backup: no
+
+- name: copy systemd service file
+  copy:
+    src: lmod-scache.service
+    dest: "/etc/systemd/system/lmod-scache.service"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: no
+  notify: daemon reload
+
+- name: copy systemd timer file
+  template:
+    src: lmod-scache.timer.j2
+    dest: "/etc/systemd/system/lmod-scache.timer"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: no
+  notify: daemon reload
+
+- name: enable backup
+  systemd:
+    name: "lmod-scache.timer"
+    enabled: yes
+    state: started
+
+...

@@ -1,0 +1,7 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+source /etc/profile.d/lmod.sh
+source /etc/profile.d/z00_lmod.sh
+
+"${LMOD_DIR}/update_lmod_system_cache_files" -d "{{ lmod_rc_cache }}" -t "{{ lmod_rc_cache}}/cacheTS.txt" $MODULEPATH

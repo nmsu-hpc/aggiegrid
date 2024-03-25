@@ -1,0 +1,9 @@
+---
+
+autofs_sysconfig_use_misc_devices: "yes"
+autofs_sysconfig_options: ""
+
+autofs_unmanged_dropins: true # true/false
+
+autofs_master: []
+autofs_maps: []

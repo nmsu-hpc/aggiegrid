@@ -1,0 +1,13 @@
+---
+
+rsyslog_allow_dropins: false # true/false
+
+rsyslog_reception: false # true/false
+
+rsyslog_forwarding: false # true/false
+rsyslog_fwd_target: "tsm-mh-1.nmsu.edu" # true/false
+rsyslog_fwd_port: "1514" # true/false
+rsyslog_fwd_protocol: "udp" # udp/tcp
+
+
+...

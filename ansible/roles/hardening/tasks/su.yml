@@ -1,0 +1,17 @@
+---
+
+- name: set assessor token for upload server
+  lineinfile:
+    path: '/etc/group'
+    regexp: '^suadmins:x:621:'
+    line: "suadmins:x:621:root,{{ hrd_su_admins | join(',') }}"
+
+- name: set su pam module
+  template:
+    src: 'etc/pam.d/su.j2'
+    dest: '/etc/pam.d/su'
+    owner: root
+    group: root
+    mode: '0644'
+
+...

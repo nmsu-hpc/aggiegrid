@@ -1,0 +1,11 @@
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/root/.timers/grid-startup.sh
+
+[Install]
+WantedBy=multi-user.target
+
+[Unit]
+Wants=network-online.target nftables.service hypervkvpd.service
+After=network-online.target nftables.service hypervkvpd.service

@@ -1,0 +1,55 @@
+---
+
+# Kernel Hardening
+- include_tasks: kernel.yml
+  when: hrd_kernel
+
+# Disable User Coredumps
+- include_tasks: coredump.yml
+  when: hrd_coredump
+
+# Disable Floppy Devices
+- include_tasks: nofloppy.yml
+  when: hrd_nofloppy
+
+# FS tmp File Systems
+- include_tasks: fstmp.yml
+  when: hrd_fstmp
+
+# FS Mount Options
+- include_tasks: fsopt.yml
+  when: hrd_fsopt
+
+# Log File Permissions
+- include_tasks: logperm.yml
+  when: hrd_logperm
+
+# /etc/login/defs
+- include_tasks: logindef.yml
+  when: hrd_logindef
+
+# /etc/login/defs
+- include_tasks: useradd.yml
+  when: hrd_useradd
+
+# PAM AuthSelect
+- include_tasks: authselect.yml
+  when: >
+    ((ansible_distribution == "RedHat"
+    or ansible_distribution == "CentOS")
+    and ansible_distribution_major_version == "8")
+    and hrd_authselect
+
+# SU access
+- include_tasks: su.yml
+  when: hrd_su
+
+# No Wifi
+- include_tasks: nowifi.yml
+  when: hrd_nowifi
+
+# sysctl settings
+- include_tasks: sysctl.yml
+  when: hrd_sysctl
+
+...

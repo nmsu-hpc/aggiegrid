@@ -1,0 +1,54 @@
+---
+
+- name: '/etc/fstab: Set "nodev" on specified mount points'
+  lineinfile:
+    path: /etc/fstab
+    backup: yes
+    backrefs: yes
+    regexp: '^(\S+\s+{{ item }}\s+\S+\s+)(?!(?:\S*,)?{{ opt }}(?:,\S*)?\s+)(\S+)(\s+.+)$'
+    line: '\1{{ opt }},\2\3'
+  vars:
+    opt: 'nodev'
+  register: fstab_nodev
+  with_items: "{{ hrd_fsopt_nodev }}"
+
+- name: '/etc/fstab: Set "nosuid" on specified mount points'
+  lineinfile:
+    path: /etc/fstab
+    backup: yes
+    backrefs: yes
+    regexp: '^(\S+\s+{{ item }}\s+\S+\s+)(?!(?:\S*,)?{{ opt }}(?:,\S*)?\s+)(\S+)(\s+.+)$'
+    line: '\1{{ opt }},\2\3'
+  vars:
+    opt: 'nosuid'
+  register: fstab_nosuid
+  with_items: "{{ hrd_fsopt_nosuid }}"
+
+- name: '/etc/fstab: Set "noexec" on specified mount points'
+  lineinfile:
+    path: /etc/fstab
+    backup: yes
+    backrefs: yes
+    regexp: '^(\S+\s+{{ item }}\s+\S+\s+)(?!(?:\S*,)?{{ opt }}(?:,\S*)?\s+)(\S+)(\s+.+)$'
+    line: '\1{{ opt }},\2\3'
+  vars:
+    opt: 'noexec'
+  register: fstab_noexec
+  with_items: "{{ hrd_fsopt_noexec }}"
+
+- name: 'generate changed list' # noqa 503
+  set_fact:
+    fstab_changed: "{{ ((fstab_changed | default([])) + [ item.item ]) | unique }}"
+  when: item.changed
+  with_items: "{{ fstab_nodev.results + fstab_nosuid.results + fstab_noexec.results }}"
+
+- name: 'remount filesystem if changed'
+  mount:
+    path: "{{ item }}"
+    state: remounted
+  with_items: "{{ fstab_changed }}"
+  when:
+    - fstab_changed is defined
+    - fstab_changed | length > 0
+
+...

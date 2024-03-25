@@ -1,0 +1,23 @@
+---
+
+- name: check for network manager cli tool
+  command: which nmcli
+  changed_when: false
+  failed_when: false
+  register: nmcli_check
+
+- name: disable wifi through nmcli # noqa 306
+  shell: nmcli radio all | tail -n -1 | awk '{print $2; print $4}'
+  changed_when: false
+  failed_when: false
+  register: wifi_status
+  when: nmcli_check.rc == 0
+
+- name: disable wifi through nmcli
+  command: nmcli radio all off
+  when: >
+    nmcli_check.rc == 0
+    and wifi_status is defined
+    and "enabled" in wifi_status.stdout
+
+...

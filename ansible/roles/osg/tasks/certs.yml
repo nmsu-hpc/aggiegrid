@@ -1,0 +1,30 @@
+---
+
+- name: install cert scripts
+  package:
+    name:
+      - 'osg-ca-scripts'
+      - 'fetch-crl'
+    state: present
+  register: osg_certs_install
+
+- name: setup scripts to install
+  command: osg-ca-manage setupCA --location root --url osg
+  when: osg_certs_install.changed
+
+- name: start & enable services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - 'osg-update-certs-cron'
+    - 'fetch-crl-cron'
+
+- name: enable but don't start boot only service
+  systemd:
+    name: 'fetch-crl-boot'
+    enabled: yes
+    state: stopped
+
+...

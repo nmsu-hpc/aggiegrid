@@ -1,0 +1,2 @@
+[aggiegrid]
+ag-template ansible_port=1122 ansible_host=IP ansible_user=root

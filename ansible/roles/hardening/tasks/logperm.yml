@@ -1,0 +1,43 @@
+---
+
+- name: get log files
+  find:
+    paths: '/var/log'
+    patterns: '*'
+    file_type: file
+    recurse: no
+  register: log_files
+
+- name: get log folders
+  find:
+    paths: '/var/log'
+    patterns: '*'
+    file_type: directory
+    recurse: no
+  register: log_folders
+
+- name: set existing log file permissions
+  file:
+    path: "{{ item.path }}"
+    mode: 'u=rwX,g=rX,o-rwx'
+    state: touch
+  with_items: "{{ log_files.files }}"
+
+- name: set existing log folder permissions
+  file:
+    path: "{{ item.path }}"
+    mode: 'u=rwX,g=rX,o-rwx'
+    recurse: yes
+  with_items: "{{ log_folders.files }}"
+
+- name: set '/var/log' file permissions
+  file:
+    path: '/var/log'
+    owner: root
+    group: root
+    mode: 'u=rwX,g=rX,o=rX'
+    recurse: no
+    state: directory
+
+
+...

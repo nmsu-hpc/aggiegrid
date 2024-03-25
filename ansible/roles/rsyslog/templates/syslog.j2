@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+# ansible role = usa-roles/rsyslog
+/var/log/boot.log
+/var/log/cron
+/var/log/kernel
+/var/log/localmessages
+/var/log/maillog
+/var/log/messages
+/var/log/news
+/var/log/secure
+/var/log/spooler
+/var/log/warn
+{
+    rotate 12
+    weekly
+    create 0640 root root
+    missingok
+	notifempty
+    delaycompress
+    compress
+    sharedscripts
+    postrotate
+        /usr/bin/systemctl kill -s HUP rsyslog.service >/dev/null 2>&1 || true
+    endscript
+}

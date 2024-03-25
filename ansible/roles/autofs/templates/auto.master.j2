@@ -1,0 +1,32 @@
+# {{ ansible_managed }}
+
+# Items with non-managed map files (auto.misc, auto.net, auto.smb, etc..)
+{% if autofs_master is iterable and autofs_master is not string %}
+{% for item in autofs_master %}
+{{ item }}
+{% endfor %}
+{% else %}
+{{ autofs_master }}
+{% endif %}
+
+{% set merged = (hostvars[inventory_hostname].keys() | select('match', '^autofs_master_.*$') | list) %}
+{% if merged|length > 0 %}
+{%   for listvar in merged %}
+{%     for entry in [(hostvars[inventory_hostname][listvar])] %}
+{{ entry }}
+{%     endfor %}
+{%   endfor %}
+{% endif %}
+
+# Items with map files controlled by Ansible
+{% for item in autofs_merged_maps %}
+{{ item.path }}  /etc/autofs.maps.d/{{ item.name }}  {{ item.options | default("") }}
+
+{% endfor %}
+
+{% if autofs_unmanged_dropins %}
+# Include /etc/auto.master.d/*.autofs
+# The included files must conform to the format of this file.
+#
++dir:/etc/auto.master.d
+{% endif %}

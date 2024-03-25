@@ -1,0 +1,12 @@
+---
+
+- name: update authselect
+  command: authselect apply-changes
+
+- name: sysctl reload
+  command: sysctl --system
+
+- name: sysctl flush net
+  command: sysctl -w net.ipv4.route.flush=1
+
+...

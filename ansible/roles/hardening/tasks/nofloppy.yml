@@ -1,0 +1,19 @@
+---
+
+- name: blacklist floppy
+  copy:
+    src: 'etc/modprobe.d/nofloppy.conf'
+    dest: '/etc/modprobe.d/nofloppy.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: dracut omit floppy
+  copy:
+    src: 'etc/dracut.conf.d/nofloppy.conf'
+    dest: '/etc/dracut.conf.d/nofloppy.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+...

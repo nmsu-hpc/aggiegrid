@@ -1,0 +1,69 @@
+# {{ ansible_managed }}
+# Role = usa-roles/hardening (sysctl)
+
+{% if hrd_sysctl_net_no_ipForwarding %}
+# Disable IP Forwarding
+net.ipv4.ip_forward=0
+net.ipv6.conf.all.forwarding=0
+{% endif %}
+
+{% if hrd_sysctl_net_no_packetRedirectSending %}
+# Disable Packet Redirect Sending
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+{% endif %}
+
+{% if hrd_sysctl_net_no_sourceRoutedPackets %}
+# Block Source Routed Packets
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv6.conf.all.accept_source_route = 0
+net.ipv6.conf.default.accept_source_route = 0
+{% endif %}
+
+{% if hrd_sysctl_net_no_icmpRedirects %}
+# Block ICMP Redirects
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0
+{% endif %}
+
+{% if hrd_sysctl_net_no_secureIcmpRedirects %}
+# Block Secure ICMP Redirects
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+{% endif %}
+
+{% if hrd_sysctl_net_logSuspiciousPackets %}
+# Log Suspicious Packets
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.default.log_martians = 1
+{% endif %}
+
+{% if hrd_sysctl_net_no_broadcastIcmpRequests %}
+# Ignore Broadcast ICMP Requests
+net.icmp_echo_ignore_broadcasts=1
+{% endif %}
+
+{% if hrd_sysctl_net_no_bogusIcmpResponses %}
+# Ignore Bogus ICMP Responses
+net.ipv4.icmp_ignore_bogus_error_responses=1
+{% endif %}
+
+{% if hrd_sysctl_net_yes_reversePathFiltering %}
+# Enable Reverse Path Filtering
+net.ipv4.conf.default.rp_filter=1
+net.ipv4.conf.all.rp_filter=1
+{% endif %}
+
+{% if hrd_sysctl_net_yes_tcpSynCookies %}
+# Enable TCP SYN Cookies
+net.ipv4.tcp_syncookies=1
+{% endif %}
+
+{% if hrd_sysctl_net_no_ip6RouterAdverts %}
+# Disable IPv6 Router Advertisements
+net.ipv6.conf.all.accept_ra = 0
+net.ipv6.conf.default.accept_ra = 0
+{% endif %}

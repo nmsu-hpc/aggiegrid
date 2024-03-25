@@ -1,0 +1,33 @@
+---
+
+lmod_admin_file: "/usr/share/lmod/admin.list"
+lmod_admin_file_content: ""
+lmod_auto_swap: "no"
+lmod_cached_loads: "no"
+lmod_case_independent_sorting: "yes"
+lmod_colorize: "yes"
+lmod_disable_name_autoswap: "yes"
+lmod_exact_match: "no"
+lmod_mpath_avail: "yes"
+lmod_pin_versions: "yes"
+lmod_prepend_block: "normal"
+lmod_rc: "/usr/share/lmod/rc.lua"
+lmod_rc_cache: "/usr/share/lmod/cache"
+lmod_rc_extra_content: |
+  scDescriptT = {
+      {
+          ["dir"] = "{{lmod_rc_cache}}",
+          ["timestamp"] = "{{lmod_rc_cache}}/cacheTS.txt",
+      },
+  }
+lmod_settarg_cmd: ":"
+lmod_full_settarg_support: "yes"
+lmod_settarg_full_support: "yes"
+lmod_settarg_title_bar: "yes"
+
+lmod_modulepath: ""
+
+lmod_is_shared_cache_controller: false
+lmod_timer_oncalender: "*-*-* *:00:00"
+
+...

@@ -1,0 +1,53 @@
+---
+
+- name: Ensure map file directory
+  file:
+    path: "/etc/autofs.maps.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: '0755'
+
+- name: generate merged maps fact
+  set_fact:
+    autofs_merged_maps: "{{ autofs_maps }}"
+
+- name: merge extra map variable dictionaries
+  set_fact:
+    autofs_merged_maps: "{{ autofs_merged_maps + hostvars[inventory_hostname][item] }}"
+  with_items: "{{ hostvars[inventory_hostname].keys() | select('match', '^autofs_maps_.*$') | list }}"
+
+- name: "Create map file(s) from template"
+  template:
+    src: "mapfile.j2"
+    dest: "/etc/autofs.maps.d/{{ item.name }}"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+  with_items: "{{ autofs_merged_maps }}"
+  register: autofs_template_maps
+  notify: restart autofs
+
+- name: compile list of managed map files
+  set_fact:
+    autofs_managed_map_files: "{{ autofs_template_maps.results|selectattr('invocation', 'defined')|map(attribute='invocation.module_args.dest')|list }}"
+
+- name: compile list of all map files
+  find:
+    paths: "/etc/autofs.maps.d"
+    patterns: "*"
+    hidden: yes
+    file_type: any
+  register: autofs_all_map_files
+
+- name: compile list of unmanaged map files
+  set_fact:
+    autofs_map_files_to_delete: "{{ autofs_all_map_files.files|map(attribute='path')|difference(autofs_managed_map_files) }}"
+
+- name: delete unmanaged map files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ autofs_map_files_to_delete }}"
+  notify: restart autofs
+  when: (autofs_map_files_to_delete|length > 0)

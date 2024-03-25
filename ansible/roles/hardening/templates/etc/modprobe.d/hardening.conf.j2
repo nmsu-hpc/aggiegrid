@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+{% for module in (hrd_kernel_blacklist | difference(hrd_kernel_whitelist)) %}
+install {{module}} /bin/true
+{% endfor %}

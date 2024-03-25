@@ -1,0 +1,30 @@
+---
+
+- name: set pam limits to disable user coredumps
+  pam_limits:
+    dest: '/etc/security/limits.d/10.hardening.conf'
+    domain: '*'
+    limit_type: hard
+    limit_item: core
+    value: '0'
+    comment: Prevent core dumps for all users. These are usually not needed and may contain sensitive information
+
+- name: set sysctl coredump setting
+  sysctl:
+    sysctl_file: '/etc/sysctl.d/10.hardening.conf'
+    name: 'fs.suid_dumpable'
+    value: '0'
+    state: present
+    reload: yes
+
+- name: set perms on hardening.conf files
+  file:
+    path: "{{ item }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  with_items:
+    - '/etc/security/limits.d/10.hardening.conf'
+    - '/etc/sysctl.d/10.hardening.conf'
+
+...

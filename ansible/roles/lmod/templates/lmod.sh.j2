@@ -1,0 +1,44 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+########################################################################
+#  This is the system wide source file for setting up modules.
+########################################################################
+
+# NOOP if running under known resource manager
+if [ ! -z "$SLURM_NODELIST" ];then
+	return
+fi
+
+if [ ! -z "$PBS_NODEFILE" ];then
+	return
+fi
+
+export LMOD_ADMIN_FILE="{{ lmod_admin_file }}"
+export LMOD_AUTO_SWAP="{{ lmod_auto_swap }}"
+export LMOD_CACHED_LOADS="{{ lmod_cached_loads }}"
+export LMOD_CASE_INDEPENDENT_SORTING="{{ lmod_case_independent_sorting }}"
+export LMOD_COLORIZE="{{ lmod_colorize }}"
+export LMOD_DISABLE_NAME_AUTOSWAP="{{ lmod_disable_name_autoswap }}"
+export LMOD_EXACT_MATCH="{{ lmod_exact_match }}"
+export LMOD_MPATH_AVAIL="{{ lmod_mpath_avail }}"
+export LMOD_PIN_VERSIONS="{{ lmod_pin_versions }}"
+export LMOD_PREPEND_BLOCK="{{ lmod_prepend_block }}"
+
+{% if lmod_rc | length > 0  %}
+if [ -f "{{ lmod_rc }}" ]; then
+	export LMOD_RC="{{ lmod_rc }}"
+fi
+{% endif %}
+
+export LMOD_SETTARG_CMD="{{ lmod_settarg_cmd }}"
+export LMOD_FULL_SETTARG_SUPPORT="{{ lmod_full_settarg_support }}"
+export LMOD_SETTARG_FULL_SUPPORT="{{ lmod_settarg_full_support }}"
+export LMOD_SETTARG_TITLE_BAR="{{ lmod_settarg_title_bar }}"
+
+{% if lmod_modulepath | length > 0  %}
+export MODULEPATH="/usr/share/lmod/lmod/modulefiles/Core"
+export MODULEPATH+=":{{ lmod_modulepath }}"
+{% else %}
+export MODULEPATH="/usr/share/lmod/lmod/modulefiles/Core"
+{% endif %}

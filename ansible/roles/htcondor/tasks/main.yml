@@ -1,0 +1,47 @@
+---
+
+- name: Setup HTCondor Repo
+  get_url:
+    url: 'http://repo.nmsu.edu/hpc/htcondor/8.8/hpc-htcondor.repo'
+    dest: '/etc/yum.repos.d/hpc-htcondor.repo'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: add exclude to epel repo
+  ini_file:
+    path: '/etc/yum.repos.d/epel.repo'
+    section: epel
+    option: exclude
+    value: 'condor*'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: install Condor
+  package:
+    name: 'condor-all'
+    state: present
+
+- name: copy config file
+  copy:
+    src: condor_config
+    dest: '/etc/condor/condor_config'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: disable condor (leave off)
+  systemd:
+    name: condor
+    enabled: no
+    state: stopped
+
+- name: set condor pool password
+  command: condor_store_cred -f /var/lib/condor/pool_password -p "{{ htcondor_pool_password }}"
+  no_log: true
+  when:
+    - htcondor_pool_password is defined
+    - htcondor_pool_password | length > 0
+
+...

@@ -1,0 +1,6 @@
+---
+
+bash_noroot_tmout: false # true/false
+bash_tmout: "900" # 15 Minutes
+
+...

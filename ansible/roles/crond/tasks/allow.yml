@@ -1,0 +1,16 @@
+---
+
+- name: remove cron.deny
+  file:
+    path: '/etc/cron.deny'
+    state: 'absent'
+
+- name: set cron.allow
+  template:
+    src: 'cron.access.j2'
+    dest: '/etc/cron.allow'
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
+
+...

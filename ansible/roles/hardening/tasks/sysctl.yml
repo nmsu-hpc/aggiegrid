@@ -1,0 +1,14 @@
+---
+
+- name: set network sysctl settings
+  template:
+    src: 'etc/sysctl.d/10-hardening.net.conf.j2'
+    dest: '/etc/sysctl.d/10-hardening.net.conf'
+    owner: root
+    group: root
+    mode: '0600'
+  notify:
+    - sysctl reload
+    - sysctl flush net
+
+...

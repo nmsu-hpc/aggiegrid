@@ -1,0 +1,18 @@
+#%PAM-1.0
+
+# {{ ansible_managed }}
+# Role = usa-roles/hardening (su)
+
+auth            required        pam_env.so
+auth            sufficient      pam_rootok.so
+{% if hrd_su_restrict %}
+auth            required        pam_wheel.so use_uid group=suadmins
+{% endif %}
+auth            substack        system-auth
+auth            include         postlogin
+account         sufficient      pam_succeed_if.so uid = 0 use_uid quiet
+account         include         system-auth
+password        include         system-auth
+session         include         system-auth
+session         include         postlogin
+session         optional        pam_xauth.so

@@ -1,0 +1,19 @@
+---
+
+- name: install bash packages
+  package:
+    name:
+      - 'bash'
+      - 'bash-completion'
+      - 'bash-doc'
+
+- name: set /etc/profile.d/hardening.sh
+  template:
+    src: hardening.sh.j2
+    dest: /etc/profile.d/hardening.sh
+    owner: root
+    group: root
+    mode: "u=rx,g=rx,o=rx"
+    backup: no
+
+...

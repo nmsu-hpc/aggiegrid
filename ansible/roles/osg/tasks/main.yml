@@ -1,0 +1,22 @@
+---
+
+- name: add OSG yum repository
+  yum_repository:
+    name: "{{ osg_repo_name }}"
+    description: "{{ osg_repo_description }}"
+    file: "{{ osg_repo_file }}"
+    baseurl: "{{ osg_repo_baseurl }}"
+    gpgkey: "{{ osg_repo_gpgkey }}"
+    gpgcheck: "{{ osg_repo_gpgcheck }}"
+    enabled: "{{ osg_repo_enabled }}"
+    exclude: "{{ osg_repo_exclude }}"
+
+- include_tasks: certs.yml
+
+- include_tasks: cvmfs.yml
+  when: osg_cvmfs
+
+- name: install worker node client packages
+  package:
+    name: 'osg-wn-client'
+    state: present

@@ -1,0 +1,65 @@
+---
+
+- name: ensure openssh is installed (is by default)
+  package:
+    name:
+      - "openssh"
+      - "openssh-server"
+      - "openssh-clients"
+    state: present
+
+- name: set the issue notice files
+  template:
+    src: issue.j2
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: no
+  with_items:
+    - '/etc/issue'
+    - '/etc/issue.net'
+
+- name: configure sshd_config
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0600'
+    backup: no
+  notify: restart sshd
+
+- name: find private host keys
+  find:
+    paths: '/etc/ssh'
+    patterns: 'ssh_host_*_key'
+  register: openssh_host_priv_keys
+
+- name: find public host keys
+  find:
+    paths: '/etc/ssh'
+    patterns: 'ssh_host_*_key.pub'
+  register: openssh_host_pub_keys
+
+- name: set host private key perms
+  file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: '0600'
+  with_items: "{{ openssh_host_priv_keys.files }}"
+
+- name: set host public key perms
+  file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items: "{{ openssh_host_pub_keys.files }}"
+
+- name: enable/start openssh
+  systemd:
+    name: "sshd"
+    enabled: yes
+    state: started

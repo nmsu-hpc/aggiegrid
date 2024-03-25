@@ -1,0 +1,36 @@
+---
+
+- name: Install Packages
+  package:
+    name: "Lmod"
+    state: present
+
+- name: Set Login Profile Script
+  template:
+    src: lmod.sh.j2
+    dest: /etc/profile.d/lmod.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Set Login Profile Script
+  template:
+    src: admin.list.j2
+    dest: "{{ lmod_admin_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Set Lmod RC File
+  template:
+    src: rc.lua.j2
+    dest: "{{ lmod_rc }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Setup Shared Spider Cache
+  include_tasks: cache.yml
+  when: lmod_is_shared_cache_controller
+
+...

@@ -1,0 +1,38 @@
+---
+
+- name: Install Common Packages
+  package:
+    name:
+      - "nfs-utils"
+      - "nfs4-acl-tools"
+      - "cifs-utils"
+      - "acl"
+      - "autofs"
+    state: present
+
+- name: Create map files
+  include_tasks: map.yml
+
+- name: Set autofs master file
+  template:
+    src: "auto.master.j2"
+    dest: "/etc/auto.master"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+  notify: restart autofs
+
+- name: Ensure drop in master config folder
+  file:
+    path: "/etc/auto.master.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: autofs_unmanged_dropins
+
+- name: Enable/Start autofs service
+  systemd:
+    name: "autofs"
+    enabled: yes
+    state: "started"

@@ -1,0 +1,55 @@
+---
+
+- name: apply configuration
+  hosts: all
+  become: yes
+  roles:
+    # Pre-Setup (Mandatory Order!)
+    - epel # setup epel repo
+    - nftables # setup firewall
+    # Setup (Sorted A-Z)
+    - atd
+    - bash
+    - chrony
+    - crond
+    - journald
+    - openssh
+    - rsyslog
+    - selinux
+    # Post-Setup (Mandatory Order!)
+    - hardening
+    # AggieGrid Specific
+    - autofs
+    - htcondor
+    - lmod
+    - osg
+    - singularity
+    #- telegraf
+    - grid-startup
+  tasks:
+    - name: install hyper-v packages
+      package:
+        name:
+          - 'hyperv-daemons'
+          - 'hyperv-tools'
+        state: present
+
+    - name: Checking GRUB cmdline
+      shell: "grep 'GRUB_CMDLINE_LINUX=.*elevator=noop.*' /etc/default/grub"
+      register: grub_cfg_grep
+      changed_when: false
+      failed_when: false
+
+    - name: Configuring GRUB cmdline
+      replace:
+        path: '/etc/default/grub'
+        regexp: '^GRUB_CMDLINE_LINUX="((\w.?)*)"$'
+        replace: 'GRUB_CMDLINE_LINUX="\1 elevator=noop"'
+      when: '"elevator=noop" not in grub_cfg_grep'
+      register: grub_cfg_replace
+
+    - name: update GRUB
+      command: grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg
+      when: grub_cfg_replace.changed
+
+...

@@ -1,0 +1,4 @@
+---
+
+dependencies:
+  - role: usa-roles/autofs

@@ -1,0 +1,31 @@
+---
+
+- name: influxdb repo
+  yum_repository:
+    name: influxdata
+    description: InfluxData Repository
+    baseurl: "url"
+    gpgkey: "gpg.key"
+    gpgcheck: yes
+
+- name: Install Telegraf Package
+  yum:
+    name: telegraf
+    state: present
+
+- name: Copy telegraf configuration
+  template:
+    src: telegraf.conf.j2
+    dest: /etc/telegraf/telegraf.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart telegraf
+
+- name: enable and restart telegraf service
+  systemd:
+    name: telegraf
+    enabled: yes
+    state: started
+
+...

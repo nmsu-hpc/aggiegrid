@@ -1,0 +1,46 @@
+---
+
+- name: install rsyslog packages
+  package:
+    name: 'rsyslog'
+    state: present
+
+- name: set /etc/rsyslog.conf
+  template:
+    src: 'rsyslog.conf.j2'
+    dest: '/etc/rsyslog.conf'
+    owner: root
+    group: root
+    mode: '0600'
+  notify: restart rsyslog
+
+- name: create dropin config folder
+  file:
+    path: '/etc/rsyslog.d'
+    owner: root
+    group: root
+    mode: '0700'
+    state: directory
+  when: rsyslog_allow_dropins
+
+- name: delete dropin config folder
+  file:
+    path: '/etc/rsyslog.d'
+    state: absent
+  when: not rsyslog_allow_dropins
+
+- name: set rsyslog lograte
+  template:
+    src: 'syslog.j2'
+    dest: '/etc/logrotate.d/syslog'
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: start/enable rsyslog service
+  systemd:
+    name: 'rsyslog'
+    enabled: yes
+    state: started
+
+...

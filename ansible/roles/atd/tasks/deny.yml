@@ -1,0 +1,16 @@
+---
+
+- name: remove at.allow
+  file:
+    path: '/etc/at.allow'
+    state: 'absent'
+
+- name: set at.deny
+  template:
+    src: 'at.access.j2'
+    dest: '/etc/at.deny'
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
+
+...

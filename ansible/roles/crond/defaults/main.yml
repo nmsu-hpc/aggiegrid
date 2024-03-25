@@ -1,0 +1,6 @@
+---
+
+crond_access_mode: "allow" # allow/deny
+crond_user_list: []
+
+...

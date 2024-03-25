@@ -1,0 +1,10 @@
+[Unit]
+Description="Update lmod system spider cache."
+
+[Timer]
+OnCalendar={{ lmod_timer_oncalender }}
+Persistent=true
+Unit=lmod-scache.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,31 @@
+---
+- name: Chrony | Set TimeZone
+  timezone:
+    name: "America/Denver"
+  notify: time change
+
+- name: Chrony | Remove ntp/ntpd
+  package:
+    name: ntpd
+    state: absent
+
+- name: Chrony | Install Chrony
+  package:
+    name: chrony
+    state: present
+
+- name: Chrony | Copy Config
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: no
+  notify: time change
+
+- name: Chrony | Enable Chronyd
+  systemd:
+    name: chronyd
+    enabled: yes
+    state: started

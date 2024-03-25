@@ -1,0 +1,85 @@
+---
+
+# true/false run hardening catagory
+hrd_kernel: true
+hrd_coredump: true
+hrd_nofloppy: true
+hrd_fstmp: true
+hrd_fsopt: true
+hrd_logperm: false
+hrd_logindef: true
+hrd_useradd: true
+hrd_authselect: true
+hrd_su: true
+hrd_nowifi: true
+hrd_sysctl: true
+
+# Disable Kernel Modules
+hrd_kernel_check_mnt_fstab: true
+hrd_kernel_check_mnt_all: true
+hrd_kernel_whitelist: []
+hrd_kernel_blacklist:
+  - "cramfs"
+  - "freevxfs"
+  - "jffs2"
+  - "hfs"
+  - "hfsplus"
+  - "squashfs"
+  - "udf"
+  - "vfat"
+  - "tipc"
+  - "sctp"
+  - "dccp"
+  - "rds"
+
+# FS Options
+hrd_fsopt_nodev:
+  - "/home"
+  - "/tmp"
+  - "/var/tmp"
+  - "/dev/shm"
+hrd_fsopt_nosuid:
+  - "/home"
+  - "/tmp"
+  - "/var/tmp"
+  - "/dev/shm"
+hrd_fsopt_noexec:
+  - "/home"
+  - "/tmp"
+  - "/var/tmp"
+  - "/dev/shm"
+
+# atd Options
+hrd_atd_access_mode: "allow" # allow/deny
+hrd_atd_user_list: []
+
+# /etc/login.defs
+hrd_logindef_passMaxDays: '365' # 99999
+hrd_logindef_passMinDays: '7'
+
+# /etc/default/useradd
+hrd_useradd_inactive: '30' # -1
+
+# AuthSelect
+hrd_authselect_pwquality_minlen: '17'
+
+# SU
+hrd_su_restrict: true # true/false
+hrd_su_admins:
+  - 'cewing'
+  - 'nex'
+
+# sysctl (true/false)
+hrd_sysctl_net_no_ipForwarding: true
+hrd_sysctl_net_no_packetRedirectSending: true
+hrd_sysctl_net_no_sourceRoutedPackets: true
+hrd_sysctl_net_no_icmpRedirects: true
+hrd_sysctl_net_no_secureIcmpRedirects: true
+hrd_sysctl_net_logSuspiciousPackets: true
+hrd_sysctl_net_no_broadcastIcmpRequests: true
+hrd_sysctl_net_no_bogusIcmpResponses: true
+hrd_sysctl_net_yes_reversePathFiltering: true
+hrd_sysctl_net_yes_tcpSynCookies: true
+hrd_sysctl_net_no_ip6RouterAdverts: true
+
+...

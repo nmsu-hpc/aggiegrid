@@ -1,0 +1,84 @@
+---
+
+# nftables
+nft_filter_sets_all:
+  - name: "hpc-admins"
+    type: "ipv4_addr"
+    flags: "interval"
+    elements:
+      - "admin IP"
+  - name: "aggie-grid"
+    type: "ipv4_addr"
+    flags: "interval"
+    elements:
+      - "login node IP" # 
+      - "head node IP" # 
+
+nft_filter_input_rules_all:
+  - name: "HPC Admin Group SSH Access"
+    priority: 25
+    rule: "tcp dport 22 ip saddr @hpc-admins accept"
+  - name: "Aggie-Grid h1/l1 SSH Access"
+    priority: 25
+    rule: "tcp dport 22 ip saddr @aggie-grid accept"
+  - name: "Aggie-Grid h1/l1 Condor Access"
+    priority: 25
+    rule: "tcp dport 9618 ip saddr @aggie-grid accept"
+
+# OpenSSH
+openssh_permitRootLogin: "no"
+openssh_passwordAuthentication: 'no'
+openssh_clientAliveInterval: '300'
+openssh_clientAliveCountMax: '3'
+openssh_extra_rules: |
+  Match Address IPs
+    PermitRootLogin yes
+    PasswordAuthentication yes
+  Match All
+
+# Postfix
+postfix_aliases:
+  - user: root
+    alias: email
+
+# AutoFS
+autofs_unmanged_dropins: true
+
+# Selinux
+selinux_mode: "disabled"
+
+# Hardening
+hrd_fsopt_noexec: []
+hrd_fsopt_nodev:
+  - "/home"
+  - "/tmp"
+  - "/var/tmp"
+  - "/dev/shm"
+  - "/var/lib/condor/execute"
+  - "/var/lib/cvmfs"
+hrd_fsopt_nosuid:
+  - "/home"
+  - "/tmp"
+  - "/var/tmp"
+  - "/dev/shm"
+  - "/var/lib/condor/execute"
+  - "/var/lib/cvmfs"
+hrd_kernel_whitelist:
+  - 'squashfs'
+  - 'overlay'
+
+# Lmod Config
+lmod_cached_loads: "yes"
+lmod_modulepath: "/etc/modulefiles:/cvmfs/connect.opensciencegrid.org/modules/modulefiles/linux-rhel7-x86_64/Core"
+
+# CVMFS OSG
+cvmfs_default_http_proxy: "http://osg-squid.nmsu.edu:31200"
+cvmfs_quota_limit: 10240
+
+# HTCondor
+htcondor_pool_password: "{{ vault_htcondor_pool_password }}"
+
+# Telegraf
+telegraf_cluster: 'aggiegrid'
+
+...

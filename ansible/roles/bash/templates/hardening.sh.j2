@@ -1,0 +1,16 @@
+#!/bin/bash
+# {{ ansible_managed }}
+
+# Set Shell Timeout (Prevent Changing)
+{% if bash_noroot_tmout %}
+if [ $EUID != 0 ]; then
+	readonly TMOUT={{ bash_tmout }}
+	export TMOUT
+fi
+{% else %}
+readonly TMOUT={{ bash_tmout }}
+export TMOUT
+{% endif %}
+
+# Set A More Secure Default User Mask
+umask 027

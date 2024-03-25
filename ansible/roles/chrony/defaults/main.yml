@@ -1,0 +1,12 @@
+---
+
+chrony_server_primary: "domain.com" # first time server
+chrony_server_backup: "domain.com" # second time server
+chrony_server_tertiary: "0.centos.pool.ntp.org iburst" # third time server
+chrony_hwtimestamp: "" # Hardware Time Stamping (hwtimestamp *)
+chrony_minsources: "" # Minimum Source to Adjust System Clock
+chrony_local_clients: "" # Network Clients Allowed To Get Time From Host
+chrony_keyfile: "" # File With Keys for NTP Auth
+chrony_log_info: "" # Select Which Information Is Logged
+
+chrony_hwclock_sync: "no"
